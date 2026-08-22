@@ -416,3 +416,5 @@ ${conversationText}`;
 app.listen(PORT, () => {
   console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
 });
+
+export default app;
