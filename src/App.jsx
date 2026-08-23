@@ -436,7 +436,7 @@ export default function App() {
               </div>
             )}
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 20 }}>
+            <div className="xr-responsive-grid-2">
               <div className="xr-card" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                 <span className="xr-label">Điểm định vị tổng thể</span>
                 <div className="xr-fr" style={{ fontSize: 56, color: tier.color, fontWeight: 800 }}>{overall}</div>
@@ -564,7 +564,7 @@ export default function App() {
             <h2 className="xr-fr xr-h1">Mức Độ Sẵn Sàng Chuyển Đổi Số &amp; AI</h2>
             <p className="xr-sub">Đánh giá khả năng ứng dụng công nghệ và mức độ tối ưu hóa hạ tầng dữ liệu của doanh nghiệp.</p>
             
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+            <div className="xr-responsive-grid-2">
               <div className="xr-card" style={{ textAlign: "center" }}>
                 <span className="xr-label">Sẵn sàng chuyển đổi số</span>
                 <div className="xr-fr" style={{ fontSize: 38, color: "#9C8CF7", fontWeight: 800, marginTop: 6 }}>
@@ -747,7 +747,7 @@ export default function App() {
             <h2 className="xr-fr xr-h1">Phân Tích Động Cơ Doanh Thu</h2>
             <p className="xr-sub">Rà soát khả năng sinh dòng tiền bền vững và tối ưu hóa chi phí thu hút khách hàng (CAC).</p>
             
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+            <div className="xr-responsive-grid-2">
               <div className="xr-card">
                 <span className="xr-label">Marketing &amp; Phễu giá trị</span>
                 <div className="xr-fr" style={{ fontSize: 26, color: "#6C6BF5", fontWeight: 700, marginTop: 4 }}>
@@ -989,7 +989,7 @@ export default function App() {
           const nextTab = TABS[currentIndex + 1];
           if (nextTab) {
             return (
-              <div style={{ maxWidth: 900, margin: "24px auto 0", display: "flex", justifyContent: "flex-end", borderTop: "1px solid #1E2536", paddingTop: "20px" }}>
+              <div className="xr-next-tab-footer">
                 <button 
                   className="xr-btn xr-btn-primary" 
                   style={{ gap: 8, padding: "10px 20px" }}
