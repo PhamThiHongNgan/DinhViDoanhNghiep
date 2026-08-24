@@ -2,8 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "fs";
-import path from "path";
 
 dotenv.config();
 
@@ -14,47 +12,89 @@ app.use(cors());
 app.use(express.json());
 
 // ==========================================
-// GEMINI AI CONFIGURATION
+// GEMINI AI CONFIGURATION (for Report only)
 // ==========================================
-const apiKey = process.env.GEMINI_API_KEY;
 
-if (!apiKey || apiKey.includes("your_gemini_api_key_here")) {
-  console.error("⚠️  CẢNH BÁO: GEMINI_API_KEY chưa được cấu hình trong file .env!");
-  console.error("   Hệ thống sẽ không hoạt động cho đến khi cung cấp API key hợp lệ.");
+// Read API key fresh each time (supports both local .env and Vercel env vars)
+function getApiKey() {
+  return process.env.GEMINI_API_KEY;
 }
 
-const genAI = new GoogleGenerativeAI(apiKey);
+// Lazy-init GenAI instance
+let _genAI = null;
+function getGenAI() {
+  const key = getApiKey();
+  if (!key || key.includes("your_gemini_api_key_here")) {
+    return null;
+  }
+  if (!_genAI) {
+    _genAI = new GoogleGenerativeAI(key);
+  }
+  return _genAI;
+}
 
-// Load system prompt once at startup
-let systemPromptBase = "";
-try {
-  systemPromptBase = fs.readFileSync(path.resolve("system-prompt.txt"), "utf8");
-  console.log("✅ Đã tải system-prompt.txt thành công.");
-} catch (err) {
-  console.warn("⚠️ Không tìm thấy system-prompt.txt, sử dụng prompt mặc định...");
-  systemPromptBase = `Bạn là Trợ lý AI phân tích và định vị mô hình kinh doanh SME sắc bén, hoạt động dựa trên khung "Tư duy mô hình kinh doanh trong kỷ nguyên Số & AI".
-Nhiệm vụ của bạn là dẫn dắt CEO qua buổi chat khảo sát định vị doanh nghiệp, tuân theo quy trình logic sau:
-1. MỞ (Chào hỏi, hỏi tên doanh nghiệp, ngành nghề)
-2. HIỂU DN (Tìm hiểu sản phẩm chủ lực, khách hàng mục tiêu)
-3. TÌM TRIỆU CHỨNG (Hỏi điểm đau, khó khăn lớn nhất như doanh thu đi ngang, chi phí cao,...)
-4. ĐÀO NGUYÊN NHÂN (Đi sâu vào chi tiết của triệu chứng. KHÔNG kết luận vội vàng.)
-5. XÁC NHẬN ĐIỂM NGHẼN (Nhận diện điểm nghẽn cốt lõi ở phễu bán hàng, USP, hay vận hành và hỏi xem USP của họ là gì để so sánh)
-6. TÌM TÀI SẢN (Hỏi xem doanh nghiệp đang có lợi thế, tài sản gì...)
-7. TÌM CƠ HỘI (Hỏi xem họ thấy cơ hội gì mới...)
-8. CHỐT ƯU TIÊN (Tổng kết ngắn gọn, đưa ra 1 việc cần làm ngay và chốt buổi chat)
+// ==========================================
+// STATIC CHATBOT QUESTIONS (Fixed Script)
+// ==========================================
+const CHAT_STEPS = {
+  0: {
+    stage: "MO",
+    reply: "Chào anh/chị! Tôi là Trợ lý AI phân tích và định vị mô hình kinh doanh SME. Hôm nay tôi sẽ đồng hành cùng anh/chị để rà soát, đánh giá mô hình và phát hiện các điểm nghẽn chiến lược.\n\nĐể bắt đầu, xin anh/chị chia sẻ **Tên doanh nghiệp** và **Ngành nghề/Lĩnh vực hoạt động chính** nhé.",
+  },
+  1: {
+    stage: "HIEU_DN",
+    reply: "Dạ đã ghi nhận. Tiếp theo, sản phẩm/dịch vụ **chủ lực** mang lại doanh thu chính của mình là gì? Và đối tượng **khách hàng mục tiêu** lớn nhất anh/chị đang phục vụ là ai?",
+  },
+  2: {
+    stage: "TRIEU_CHUNG",
+    reply: "Dạ tôi đã hiểu qua mô hình. Hiện tại, **triệu chứng khó khăn** lớn nhất khiến anh/chị trăn trở là gì? (Ví dụ: doanh thu dậm chân tại chỗ, chi phí vận hành quá cao, quảng cáo không hiệu quả, hay bản thân anh/chị đang bị quá tải quyết định mọi việc...)",
+  },
+  3: {
+    stage: "NGUYEN_NHAN",
+    reply: "Cảm ơn anh/chị đã chia sẻ thẳng thắn. Để tìm đúng nguyên nhân gốc rễ, tôi muốn đi sâu hơn một chút:\n\nVấn đề này thường do một vài nguyên nhân chính dưới đây. Đối với doanh nghiệp mình, anh/chị thấy do đâu nhiều nhất:\n- Ít khách hàng mới tiếp cận được thương hiệu?\n- Khách biết đến nhưng tỷ lệ chuyển đổi/chốt đơn thấp?\n- Giá trị đơn hàng nhỏ và khách cũ ít quay lại?\n- Hay do sản phẩm đã bị bão hòa và đối thủ cạnh tranh giá rẻ xuất hiện?",
+  },
+  4: {
+    stage: "XAC_NHAN",
+    reply: "Tôi hiểu rồi. Như vậy có vẻ điểm nghẽn đang nằm ở khâu tối ưu phễu hoặc định vị sản phẩm chưa đủ sắc bén. \n\nAnh/chị tự đánh giá **Khác biệt cốt lõi (USP)** của sản phẩm mình so với đối thủ trực tiếp đang ở mức nào? Khách hàng có dễ dàng nhận ra lý do vì sao họ phải mua của anh/chị thay vì bên khác không?",
+  },
+  5: {
+    stage: "TAI_SAN",
+    reply: "Cảm ơn anh/chị. Vậy hiện tại doanh nghiệp đang có **tài sản** hoặc **lợi thế** nào tốt nhất mà anh/chị tự tin có thể tận dụng để bứt phá? (Ví dụ: tệp khách hàng cũ rất trung thành, sản phẩm chất lượng vượt trội, đội ngũ nhân sự thiện chiến, hay mối quan hệ phân phối độc quyền...)",
+  },
+  6: {
+    stage: "CO_HOI",
+    reply: "Rất tuyệt vời, đó là bệ đỡ rất tốt. Trong kỷ nguyên Số & AI này, anh/chị có đang nhìn thấy **cơ hội** hay **thử nghiệm mới** nào muốn triển khai không? (Ví dụ: đưa sản phẩm lên thương mại điện tử/TikTok, áp dụng AI chăm sóc khách hàng tự động, hay đóng gói quy trình để nhượng quyền...)",
+  },
+  7: {
+    stage: "CHOT_UU_TIEN",
+    reply: "Cảm ơn anh/chị rất nhiều! Chúng ta đã đi qua đủ bức tranh khảo sát từ hiện trạng, điểm nghẽn, nguyên nhân, lợi thế đến cơ hội phát triển. Tôi đã ghi nhận toàn bộ thông tin.\n\nBây giờ tôi đang lập báo cáo phân tích định vị chi tiết cùng lộ trình hành động 30 ngày cho doanh nghiệp của anh/chị. Anh/chị hãy nhấn nút **'Xem kết quả định vị'** ngay dưới đây để xem chi tiết nhé!",
+  }
+};
 
-Quy tắc ứng xử:
-- Nói tiếng Việt chuyên nghiệp, ngắn gọn, đồng cảm nhưng thẳng thắn và sắc sảo như một chuyên gia tư vấn chiến lược.
-- Mỗi lượt trả lời chỉ viết tối đa 3-4 câu và chỉ đặt đúng 1 câu hỏi trọng tâm nhất. Tránh hỏi dồn dập nhiều câu cùng lúc.
-- Dựa trên lịch sử trò chuyện để xác định đang ở bước nào trong logic.
-- Khi số lượt user chat đạt đến 8 hoặc 9, hãy chuyển sang bước "CHỐT ƯU TIÊN", tổng kết ngắn gọn, thông báo cho CEO rằng báo cáo phân tích chi tiết đã được lập xong và họ có thể nhấn nút xem ngay phía dưới. Không được hỏi thêm nữa.`;
+// Return chatbot message based on number of user messages in history
+function handleChat(history) {
+  const userMessages = history.filter(m => m.role === "user");
+  const turn = userMessages.length;
+  
+  if (turn >= 7) {
+    return {
+      reply: CHAT_STEPS[7].reply,
+      stage: "COMPLETED"
+    };
+  }
+
+  const response = CHAT_STEPS[turn];
+  return {
+    reply: response.reply,
+    stage: response.stage
+  };
 }
 
 // ==========================================
 // API ENDPOINTS
 // ==========================================
 
-// Chatbot endpoint: GUIDES client through diagnostic logic using Gemini AI
+// Chatbot endpoint: Uses fixed script questions
 app.post("/api/chat", async (req, res) => {
   const { history } = req.body;
 
@@ -62,66 +102,12 @@ app.post("/api/chat", async (req, res) => {
     return res.status(400).json({ error: "Lịch sử trò chuyện không hợp lệ." });
   }
 
-  if (!apiKey || apiKey.includes("your_gemini_api_key_here")) {
-    return res.status(503).json({ 
-      error: "Hệ thống AI chưa được cấu hình. Vui lòng liên hệ quản trị viên để thiết lập GEMINI_API_KEY." 
-    });
-  }
-
-  try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
-      generationConfig: {
-        maxOutputTokens: 500,
-        temperature: 0.7,
-      }
-    });
-
-    const userMessagesCount = history.filter(m => m.role === "user").length;
-
-    const systemPrompt = `${systemPromptBase}
-
-- Hiện tại, buổi chat đang ở lượt thứ ${userMessagesCount + 1}/10. 
-
-Lịch sử cuộc hội thoại:
-${history.map(m => `${m.role === "user" ? "CEO" : "AI"}: ${m.content}`).join("\n")}
-AI:`;
-
-    console.log(`🤖 Generating AI chat response for turn ${userMessagesCount}...`);
-    const result = await model.generateContent(systemPrompt);
-    const replyText = result.response.text().trim();
-
-    // Determine current stage based on user message count
-    let stage = "MO";
-    if (userMessagesCount >= 7) {
-      stage = "COMPLETED";
-    } else if (userMessagesCount >= 6) {
-      stage = "CHOT_UU_TIEN";
-    } else if (userMessagesCount >= 5) {
-      stage = "CO_HOI";
-    } else if (userMessagesCount >= 4) {
-      stage = "TAI_SAN";
-    } else if (userMessagesCount >= 3) {
-      stage = "XAC_NHAN";
-    } else if (userMessagesCount >= 2) {
-      stage = "NGUYEN_NHAN";
-    } else if (userMessagesCount >= 1) {
-      stage = "TRIEU_CHUNG";
-    } else {
-      stage = "HIEU_DN";
-    }
-
-    console.log(`✅ AI response generated successfully (stage: ${stage})`);
-    res.json({ reply: replyText, stage });
-  } catch (error) {
-    console.error("❌ Gemini Chat API Error:", error.message);
-    res.status(500).json({ 
-      error: `Lỗi kết nối AI: ${error.message}. Vui lòng thử lại sau.` 
-    });
-  }
+  console.log(`💬 Chat request - Turn: ${history.filter(m => m.role === "user").length}`);
+  const result = handleChat(history);
+  res.json(result);
 });
 
-// Report generation endpoint: Analyzes the chat history and outputs structured audit JSON using Gemini AI
+// Report generation endpoint: Uses Gemini AI to analyze conversation and generate dynamic report
 app.post("/api/report", async (req, res) => {
   const { history } = req.body;
 
@@ -129,7 +115,8 @@ app.post("/api/report", async (req, res) => {
     return res.status(400).json({ error: "Lịch sử trò chuyện không hợp lệ." });
   }
 
-  if (!apiKey || apiKey.includes("your_gemini_api_key_here")) {
+  const genAI = getGenAI();
+  if (!genAI) {
     return res.status(503).json({ 
       error: "Hệ thống AI chưa được cấu hình. Vui lòng liên hệ quản trị viên để thiết lập GEMINI_API_KEY." 
     });
@@ -218,7 +205,7 @@ Yêu cầu trả về đúng định dạng JSON có cấu trúc sau:
     const userMsg = `Dưới đây là biên bản cuộc hội thoại chẩn đoán:
 ${conversationText}`;
 
-    console.log("📊 Analyzing conversation to compile Business Diagnostic Report...");
+    console.log("📊 Analyzing conversation with Gemini AI to compile Business Diagnostic Report...");
     const result = await model.generateContent([
       { text: systemPrompt },
       { text: userMsg }
@@ -240,11 +227,13 @@ ${conversationText}`;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
-  if (apiKey && !apiKey.includes("your_gemini_api_key_here")) {
-    console.log("✅ Gemini API Key đã được cấu hình - Chế độ AI động.");
+  const key = getApiKey();
+  if (key && !key.includes("your_gemini_api_key_here")) {
+    console.log("✅ Gemini API Key đã được cấu hình - Báo cáo sẽ dùng AI động.");
   } else {
-    console.log("❌ Gemini API Key CHƯA được cấu hình - Server sẽ trả về lỗi.");
+    console.log("⚠️  Gemini API Key CHƯA cấu hình - Báo cáo phân tích sẽ không hoạt động.");
   }
+  console.log("💬 Chat phỏng vấn: Câu hỏi tĩnh cố định (không cần API).");
 });
 
 export default app;
