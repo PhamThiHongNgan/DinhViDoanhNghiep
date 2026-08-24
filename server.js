@@ -223,7 +223,7 @@ app.post("/api/chat", async (req, res) => {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-3.6-flash",
       generationConfig: {
         maxOutputTokens: 250,
         temperature: 0.7,
@@ -315,7 +315,7 @@ app.post("/api/report", async (req, res) => {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-3.6-flash",
       generationConfig: {
         responseMimeType: "application/json",
       }
@@ -417,4 +417,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
 });
 
-export default app;
+export default app; // restarted with new api key
