@@ -162,8 +162,11 @@ export default function App() {
         body: JSON.stringify({ history: newMessages })
       });
 
-      if (!response.ok) throw new Error("Không thể kết nối với máy chủ AI chat.");
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Không thể kết nối với máy chủ AI.");
+      }
 
       const updatedMessages = [...newMessages, { role: "assistant", content: data.reply }];
       setMessages(updatedMessages);
@@ -174,7 +177,7 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      setError("Gặp lỗi khi gửi dữ liệu. Vui lòng thử lại.");
+      setError(err.message || "Gặp lỗi khi gửi dữ liệu. Vui lòng thử lại.");
     } finally {
       setLoadingChat(false);
     }
@@ -190,12 +193,16 @@ export default function App() {
         body: JSON.stringify({ history: chatHistory })
       });
 
-      if (!response.ok) throw new Error("Không thể tạo báo cáo định vị.");
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Không thể tạo báo cáo định vị.");
+      }
+
       setReportData(data);
     } catch (err) {
       console.error(err);
-      setError("Lỗi tạo báo cáo định vị từ dữ liệu chat.");
+      setError(err.message || "Lỗi tạo báo cáo định vị từ AI.");
     } finally {
       setLoadingReport(false);
     }
@@ -427,14 +434,7 @@ export default function App() {
             <h2 className="xr-fr xr-h1">Định Vị Mô Hình Tổng Thể</h2>
             <p className="xr-sub">Điểm số tổng quan và phân bổ năng lực mô hình kinh doanh.</p>
             
-            {reportData?.isFallback && (
-              <div className="xr-card" style={{ borderColor: "#E8A33D", background: "rgba(232,163,61,0.08)", padding: "12px 18px", marginBottom: 20 }}>
-                <div style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 13, color: "#E8A33D" }}>
-                  <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
-                  <span>{reportData.executiveSummary}</span>
-                </div>
-              </div>
-            )}
+
 
             <div className="xr-responsive-grid-2">
               <div className="xr-card" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
