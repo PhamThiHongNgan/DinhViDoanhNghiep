@@ -268,20 +268,23 @@ export default function App() {
         return (
           <div style={{ maxWidth: 800, margin: "0 auto", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
             <div className="xr-welcome-hero" style={{ border: "none", background: "none" }}>
-              <div style={{ display: "inline-flex", justifyContent: "center", alignItems: "center", width: 64, height: 64, borderRadius: "50%", background: "rgba(108, 107, 245, 0.1)", marginBottom: 24, boxShadow: "0 0 20px rgba(108, 107, 245, 0.2)" }}>
-                <Cpu size={32} color="#9C8CF7" />
+              <div style={{ position: "relative", display: "inline-flex", justifyContent: "center", alignItems: "center", width: 64, height: 64, borderRadius: "50%", background: "#070A13", border: "1px solid rgba(108, 107, 245, 0.4)", marginBottom: 24, boxShadow: "0 0 30px rgba(108, 107, 245, 0.3)" }}>
+                <div style={{ position: "absolute", inset: -6, borderRadius: "50%", border: "1px solid rgba(108, 107, 245, 0.15)" }} />
+                <Cpu size={28} color="#9C8CF7" strokeWidth={1.5} />
               </div>
-              <h1 className="xr-fr" style={{ fontSize: 42, fontWeight: 800, color: "#F4F5FA", marginTop: 0, marginBottom: 16 }}>
-                AI BUSINESS <span style={{ background: "linear-gradient(135deg, #6C6BF5, #9C8CF7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>X-RAY</span>
+              <h1 className="xr-fr" style={{ fontSize: 44, fontWeight: 900, color: "#FFFFFF", marginTop: 0, marginBottom: 16, letterSpacing: "-0.01em" }}>
+                AI BUSINESS <span style={{ background: "linear-gradient(135deg, #7C7BF5, #A799FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>X-RAY</span>
               </h1>
-              <p style={{ fontSize: 15, color: "#8B93A8", maxWidth: 650, margin: "0 auto 32px", lineHeight: 1.6 }}>
-                Hệ thống AI Diagnostic & Transformation Platform. Chúng tôi không sử dụng Form khảo sát. Bạn sẽ được phỏng vấn trực tiếp bởi AI Business Architect để chẩn đoán điểm nghẽn trước khi áp dụng công nghệ.
+              <p style={{ fontSize: 13.5, color: "#9BA3B8", maxWidth: 640, margin: "0 auto 36px", lineHeight: 1.7 }}>
+                Hệ thống AI Diagnostic & Transformation Platform. Chúng tôi không sử dụng<br />
+                Form khảo sát. Bạn sẽ được phỏng vấn trực tiếp bởi AI Business Architect để chẩn<br />
+                đoán điểm nghẽn trước khi áp dụng công nghệ.
               </p>
               <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-                <button className="xr-btn xr-btn-primary" onClick={() => setActiveTab("interview")} style={{ padding: "14px 24px", fontSize: 15 }}>
-                  Bắt đầu Phỏng vấn AI <ArrowRight size={16} />
+                <button className="xr-btn xr-btn-primary" onClick={() => setActiveTab("interview")} style={{ padding: "12px 28px", fontSize: 13.5, background: "#5854F6", borderRadius: 8 }}>
+                  Bắt đầu Phỏng vấn AI <ArrowRight size={15} />
                 </button>
-                <button className="xr-btn xr-btn-secondary" style={{ padding: "14px 24px", fontSize: 15, background: "#1E2536", color: "#B9C0D4", border: "none" }}>
+                <button className="xr-btn xr-btn-secondary" style={{ padding: "12px 28px", fontSize: 13.5, background: "#181D2D", color: "#B9C0D4", border: "1px solid #232A3E", borderRadius: 8 }}>
                   Xem Executive Dashboard (Demo)
                 </button>
               </div>
