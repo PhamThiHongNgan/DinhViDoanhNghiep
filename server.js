@@ -93,19 +93,23 @@ app.post("/api/chat", async (req, res) => {
     const systemPrompt = `${systemPromptBase}
 
 - Hiện tại, buổi chat đang ở lượt thứ ${userMessagesCount + 1}/10. 
-Hãy đóng vai AI (Chuyên gia tư vấn) để đưa ra phản hồi tiếp theo. YÊU CẦU QUAN TRỌNG: Hãy đảm bảo đưa ra câu trả lời đầy đủ nội dung, hoàn chỉnh, tuyệt đối không bị cắt ngang hoặc bỏ dở câu giữa chừng.
+Hãy đóng vai AI (Chuyên gia tư vấn) để đưa ra phản hồi tiếp theo. YÊU CẦU QUAN TRỌNG: Bạn PHẢI trả về đúng định dạng JSON như đã yêu cầu.
 
 Lịch sử cuộc hội thoại:
-${history.map(m => `${m.role === "user" ? "CEO" : "AI"}: ${m.content}`).join("\n\n")}
-
-AI:`;
+${history.map(m => `${m.role === "user" ? "CEO" : "AI"}: ${m.content}`).join("\n\n")}`;
 
     console.log(`🤖 Generating AI chat response for turn ${userMessagesCount}...`);
     const result = await model.generateContent(systemPrompt);
     let replyText = result.response.text().trim();
-    // Remove "AI:" prefix if the model accidentally included it
-    if (replyText.startsWith("AI:")) {
-      replyText = replyText.replace(/^AI:\s*/, "");
+    
+    // Attempt to parse the JSON response
+    let parsedCognitiveData = {};
+    try {
+      const cleanJsonText = replyText.replace(/```json|```/g, "").trim();
+      parsedCognitiveData = JSON.parse(cleanJsonText);
+    } catch (e) {
+      console.warn("⚠️ Failed to parse cognitive JSON, falling back to raw text.", e);
+      parsedCognitiveData = { reply: replyText };
     }
 
     // Determine current stage based on user message count
@@ -129,7 +133,11 @@ AI:`;
     }
 
     console.log(`✅ AI response generated successfully (stage: ${stage})`);
-    res.json({ reply: replyText, stage });
+    res.json({ 
+      reply: parsedCognitiveData.reply || replyText, 
+      stage,
+      cognitiveData: parsedCognitiveData
+    });
   } catch (error) {
     console.error("❌ Gemini Chat API Error:", error.message);
     res.status(500).json({ 

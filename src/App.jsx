@@ -131,6 +131,14 @@ export default function App() {
   const [error, setError] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
+  const [cognitiveState, setCognitiveState] = useState({
+    confidence: 0,
+    whatAiKnows: ["Đang thu thập thông tin..."],
+    whatAiDoesntKnow: ["Mô hình kinh doanh", "Vấn đề hiện tại", "USP"],
+    hypothesis: "Đang hình thành giả thuyết...",
+    reasoningData: "-_-"
+  });
+  
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -171,6 +179,16 @@ export default function App() {
       const updatedMessages = [...newMessages, { role: "assistant", content: data.reply }];
       setMessages(updatedMessages);
       setStage(data.stage);
+      
+      if (data.cognitiveData) {
+        setCognitiveState({
+          confidence: data.cognitiveData.confidence ?? cognitiveState.confidence,
+          whatAiKnows: data.cognitiveData.whatAiKnows || cognitiveState.whatAiKnows,
+          whatAiDoesntKnow: data.cognitiveData.whatAiDoesntKnow || cognitiveState.whatAiDoesntKnow,
+          hypothesis: data.cognitiveData.hypothesis || cognitiveState.hypothesis,
+          reasoningData: data.cognitiveData.reasoningData || cognitiveState.reasoningData
+        });
+      }
 
       if (data.stage === "COMPLETED") {
         await generateReport(updatedMessages);
@@ -218,6 +236,13 @@ export default function App() {
     setStage("MO");
     setInputVal("");
     setReportData(null);
+    setCognitiveState({
+      confidence: 0,
+      whatAiKnows: ["Đang thu thập thông tin..."],
+      whatAiDoesntKnow: ["Mô hình kinh doanh", "Vấn đề hiện tại", "USP"],
+      hypothesis: "Đang hình thành giả thuyết...",
+      reasoningData: "-_-"
+    });
     setActiveTab("welcome");
     setError("");
     setIsSidebarOpen(false);
@@ -294,8 +319,8 @@ export default function App() {
 
       case "interview":
         return (
-          <div style={{ display: "flex", gap: 24, height: "100%" }}>
-            <div className="xr-chat-container" style={{ flex: 1 }}>
+          <div style={{ display: "flex", gap: 24, height: "calc(100vh - 80px)", marginTop: "-10px" }}>
+            <div className="xr-chat-container" style={{ flex: 1, height: "100%", maxHeight: "100%" }}>
               <div className="xr-chat-header" style={{ borderBottom: "1px solid #1E2536", background: "transparent" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <Cpu size={16} color="#6C6BF5" />
@@ -375,8 +400,8 @@ export default function App() {
             </div>
 
             {/* AI COGNITIVE ENGINE Sidebar */}
-            <div style={{ width: 320, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <div style={{ width: 340, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16, overflowY: "auto", paddingRight: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 0 }}>
                 <Cpu size={16} color="#E7E9F0" />
                 <span className="xr-fr" style={{ fontSize: 14, fontWeight: 700, color: "#E7E9F0", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI COGNITIVE ENGINE</span>
               </div>
@@ -384,35 +409,35 @@ export default function App() {
               <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1E2536", borderRadius: 12, padding: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8B93A8", fontWeight: 700, marginBottom: 8 }}>
                   <span>Confidence Level (Data Sufficiency)</span>
-                  <span style={{ color: "#4ADE9A" }}>0%</span>
+                  <span style={{ color: "#4ADE9A" }}>{cognitiveState.confidence}%</span>
                 </div>
                 <div className="xr-bar-track" style={{ height: 6, margin: 0, background: "#131926" }}>
-                  <div className="xr-bar-fill" style={{ width: "0%", background: "#4ADE9A" }} />
+                  <div className="xr-bar-fill" style={{ width: `${cognitiveState.confidence}%`, background: "#4ADE9A" }} />
                 </div>
               </div>
 
               <div>
                 <span className="xr-label" style={{ color: "#4ADE9A", display: "flex", alignItems: "center", gap: 6 }}><CheckSquare size={14} /> WHAT AI KNOWS</span>
-                <p style={{ fontSize: 13, color: "#8B93A8", marginTop: 6, fontStyle: "italic" }}>Đang thu thập thông tin...</p>
+                <ul style={{ fontSize: 12.5, color: "#4ADE9A", margin: "6px 0 0", paddingLeft: 20, lineHeight: 1.6 }}>
+                  {cognitiveState.whatAiKnows.map((item, i) => <li key={i}>{item}</li>)}
+                </ul>
               </div>
 
               <div>
                 <span className="xr-label" style={{ color: "#E8A33D", display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={14} /> WHAT AI DOESN'T KNOW</span>
-                <ul style={{ fontSize: 13, color: "#E7E9F0", margin: "6px 0 0", paddingLeft: 20, lineHeight: 1.6 }}>
-                  <li>Mô hình kinh doanh</li>
-                  <li>Vấn đề hiện tại</li>
-                  <li>USP</li>
+                <ul style={{ fontSize: 12.5, color: "#E8A33D", margin: "6px 0 0", paddingLeft: 20, lineHeight: 1.6 }}>
+                  {cognitiveState.whatAiDoesntKnow.map((item, i) => <li key={i}>{item}</li>)}
                 </ul>
               </div>
 
               <div style={{ background: "rgba(108, 107, 245, 0.05)", border: "1px solid rgba(108, 107, 245, 0.2)", borderRadius: 12, padding: 16 }}>
                 <span className="xr-label" style={{ color: "#9C8CF7" }}>CURRENT HYPOTHESIS</span>
-                <p style={{ fontSize: 13, color: "#8B93A8", marginTop: 6, fontStyle: "italic", margin: "6px 0 0" }}>Đang hình thành giả thuyết...</p>
+                <p style={{ fontSize: 13, color: "#F4F5FA", marginTop: 6, fontStyle: "italic", margin: "6px 0 0", lineHeight: 1.5 }}>{cognitiveState.hypothesis}</p>
               </div>
 
-              <div style={{ background: "#0B0F1A", border: "1px solid #1E2536", borderRadius: 12, padding: 16 }}>
+              <div style={{ background: "rgba(74, 222, 154, 0.05)", border: "1px solid rgba(74, 222, 154, 0.2)", borderRadius: 12, padding: 16 }}>
                 <span className="xr-label" style={{ color: "#4ADE9A", display: "flex", alignItems: "center", gap: 6 }}><FileText size={14} /> AI ĐANG SUY LUẬN TỪ DỮ LIỆU NÀO?</span>
-                <p style={{ fontSize: 13, color: "#8B93A8", marginTop: 6, fontFamily: "monospace", margin: "6px 0 0" }}>-_ -</p>
+                <p style={{ fontSize: 13, color: "#F4F5FA", marginTop: 6, fontStyle: "italic", margin: "6px 0 0", lineHeight: 1.5 }}>"{cognitiveState.reasoningData}"</p>
               </div>
             </div>
           </div>
