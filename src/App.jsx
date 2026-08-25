@@ -119,7 +119,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Chào anh/chị! Tôi là Trợ lý AI phân tích và định vị mô hình kinh doanh SME. Hôm nay tôi sẽ đồng hành cùng anh/chị để rà soát, đánh giá mô hình và phát hiện các điểm nghẽn chiến lược.\n\nĐể bắt đầu, xin anh/chị chia sẻ **Tên doanh nghiệp** và **Ngành nghề/Lĩnh vực hoạt động chính** nhé."
+      content: "Anh/chị hãy kể cho tôi nghe về doanh nghiệp của mình: doanh nghiệp đang bán gì, cho ai và hiện tại điều gì khiến anh/chị quan tâm nhất?"
     }
   ]);
   const [stage, setStage] = useState("MO");
@@ -212,7 +212,7 @@ export default function App() {
     setMessages([
       {
         role: "assistant",
-        content: "Chào anh/chị! Tôi là Trợ lý AI phân tích và định vị mô hình kinh doanh SME. Hôm nay tôi sẽ đồng hành cùng anh/chị để rà soát, đánh giá mô hình và phát hiện các điểm nghẽn chiến lược.\n\nĐể bắt đầu, xin anh/chị chia sẻ **Tên doanh nghiệp** và **Ngành nghề/Lĩnh vực hoạt động chính** nhé."
+        content: "Anh/chị hãy kể cho tôi nghe về doanh nghiệp của mình: doanh nghiệp đang bán gì, cho ai và hiện tại điều gì khiến anh/chị quan tâm nhất?"
       }
     ]);
     setStage("MO");
@@ -308,85 +308,159 @@ export default function App() {
 
       case "interview":
         return (
-          <div style={{ maxWidth: 800, margin: "0 auto" }}>
-            <div className="xr-chat-container">
-              <div className="xr-chat-header">
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: stage === "COMPLETED" ? "#4ADE9A" : "#D4A24C" }} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#F4F5FA" }}>
-                    {stage === "COMPLETED" ? "ĐÃ HOÀN TẤT PHỎNG VẤN" : `LƯỢT PHỎNG VẤN: ${messages.filter(m => m.role === "user").length}/10`}
-                  </span>
+          <div className="xr-interview-layout">
+            <div className="xr-chat-wrapper">
+              <div className="xr-chat-container">
+                <div className="xr-chat-header">
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Cpu size={16} color="#6C6BF5" />
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#6C6BF5", textTransform: "uppercase" }}>
+                      AI CHALLENGER
+                    </span>
+                  </div>
                 </div>
-                <span style={{ fontSize: 11, color: "#6E7691" }}>AI Agent v2.5</span>
-              </div>
 
-              <div className="xr-chat-messages">
-                {messages.map((m, idx) => {
-                  const isLastMessage = idx === messages.length - 1;
-                  return (
-                    <div key={idx} className={`xr-msg-row ${m.role === "assistant" ? "assistant" : "user"}`}>
-                      <div className="xr-msg-bubble">
-                        {formatMessageText(m.content)}
-                        
-                        {stage === "COMPLETED" && isLastMessage && m.role === "assistant" && (
-                          <div style={{ marginTop: "14px" }}>
-                            {loadingReport ? (
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#8B93A8", background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: "6px" }}>
-                                <Loader2 className="xr-spin" size={14} color="#6C6BF5" />
-                                <span>Đang lập báo cáo định vị doanh nghiệp...</span>
-                              </div>
+                <div className="xr-chat-messages">
+                  {messages.map((m, idx) => {
+                    const isLastMessage = idx === messages.length - 1;
+                    return (
+                      <div key={idx} className={`xr-msg-row ${m.role === "assistant" ? "assistant" : "user"}`}>
+                        <div className="xr-msg-content-wrapper">
+                          <div className="xr-msg-sender-label">
+                            {m.role === "assistant" ? (
+                              <>
+                                <Cpu size={14} color="#6C6BF5" />
+                                <span>AI CHALLENGER</span>
+                              </>
                             ) : (
-                              <button
-                                type="button"
-                                className="xr-btn xr-btn-primary"
-                                style={{ width: "100%", padding: "10px 14px", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
-                                onClick={() => setActiveTab("understanding")}
-                              >
-                                Xem kết quả định vị ngay <ArrowRight size={14} />
-                              </button>
+                              <>
+                                <span>CEO</span>
+                                <div className="xr-user-icon-small">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                              </>
                             )}
                           </div>
-                        )}
+                          <div className="xr-msg-bubble">
+                            {formatMessageText(m.content)}
+                            
+                            {stage === "COMPLETED" && isLastMessage && m.role === "assistant" && (
+                              <div style={{ marginTop: "14px" }}>
+                                {loadingReport ? (
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#8B93A8", background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: "6px" }}>
+                                    <Loader2 className="xr-spin" size={14} color="#6C6BF5" />
+                                    <span>Đang lập báo cáo định vị doanh nghiệp...</span>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    className="xr-btn xr-btn-primary"
+                                    style={{ width: "100%", padding: "10px 14px", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
+                                    onClick={() => setActiveTab("understanding")}
+                                  >
+                                    Xem kết quả định vị ngay <ArrowRight size={14} />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {loadingChat && (
+                    <div className="xr-msg-row assistant">
+                      <div className="xr-msg-content-wrapper">
+                        <div className="xr-msg-sender-label">
+                          <Cpu size={14} color="#6C6BF5" />
+                          <span>AI CHALLENGER</span>
+                        </div>
+                        <div className="xr-msg-bubble">
+                          <div className="xr-typing-dots">
+                            <div className="xr-typing-dot" />
+                            <div className="xr-typing-dot" />
+                            <div className="xr-typing-dot" />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
-                
-                {loadingChat && (
-                  <div className="xr-msg-row assistant">
-                    <div className="xr-msg-bubble">
-                      <div className="xr-typing-dots">
-                        <div className="xr-typing-dot" />
-                        <div className="xr-typing-dot" />
-                        <div className="xr-typing-dot" />
-                      </div>
-                    </div>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {error && (
+                  <div style={{ padding: "8px 16px", background: "rgba(247,107,107,0.1)", borderTop: "1px solid rgba(247,107,107,0.2)", color: "#F76B6B", fontSize: 12.5 }}>
+                    {error}
                   </div>
                 )}
-                
-                <div ref={messagesEndRef} />
+
+                {stage !== "COMPLETED" && (
+                  <form className="xr-chat-input-area" onSubmit={handleSend}>
+                    <input
+                      className="xr-chat-input"
+                      value={inputVal}
+                      onChange={(e) => setInputVal(e.target.value)}
+                      placeholder={loadingChat ? "AI đang trả lời..." : "Trả lời câu hỏi của AI (Nhấn Enter để gửi)..."}
+                      disabled={loadingChat}
+                    />
+                    <button className="xr-send-btn" type="submit" disabled={!inputVal.trim() || loadingChat}>
+                      <ArrowRight size={16} />
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+            
+            <div className="xr-cognitive-engine">
+              <div className="xr-cognitive-header">
+                <Cpu size={16} color="#6C6BF5" />
+                <span className="xr-fr" style={{ fontSize: 14, fontWeight: 700, color: "#E7E9F0", letterSpacing: "0.05em" }}>AI COGNITIVE ENGINE</span>
+              </div>
+              
+              <div className="xr-cognitive-section" style={{ background: "rgba(255,255,255,0.03)", padding: 16, borderRadius: 8, marginTop: 16, border: "1px solid #1E2536" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                  <span style={{ fontSize: 12, color: "#8B93A8" }}>Confidence Level (Data Sufficiency)</span>
+                  <span style={{ fontSize: 12, color: "#4ADE9A", fontWeight: 700 }}>0%</span>
+                </div>
+                <div className="xr-bar-track" style={{ height: 4, margin: 0, background: "#1E2536" }}>
+                  <div className="xr-bar-fill" style={{ width: "0%", background: "#4ADE9A" }} />
+                </div>
               </div>
 
-              {error && (
-                <div style={{ padding: "8px 16px", background: "rgba(247,107,107,0.1)", borderTop: "1px solid rgba(247,107,107,0.2)", color: "#F76B6B", fontSize: 12.5 }}>
-                  {error}
+              <div className="xr-cognitive-section" style={{ marginTop: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                  <CheckSquare size={14} color="#4ADE9A" />
+                  <span className="xr-label" style={{ color: "#4ADE9A", margin: 0 }}>WHAT AI KNOWS</span>
                 </div>
-              )}
+                <p style={{ fontSize: 13, color: "#8B93A8", margin: 0, paddingLeft: 20 }}>Đang thu thập thông tin...</p>
+              </div>
 
-              {stage !== "COMPLETED" && (
-                <form className="xr-chat-input-area" onSubmit={handleSend}>
-                  <input
-                    className="xr-chat-input"
-                    value={inputVal}
-                    onChange={(e) => setInputVal(e.target.value)}
-                    placeholder={loadingChat ? "AI đang trả lời..." : "Nhập câu trả lời của anh/chị..."}
-                    disabled={loadingChat}
-                  />
-                  <button className="xr-send-btn" type="submit" disabled={!inputVal.trim() || loadingChat}>
-                    <Send size={16} />
-                  </button>
-                </form>
-              )}
+              <div className="xr-cognitive-section" style={{ marginTop: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                  <AlertTriangle size={14} color="#E8A33D" />
+                  <span className="xr-label" style={{ color: "#E8A33D", margin: 0 }}>WHAT AI DOESN'T KNOW</span>
+                </div>
+                <ul style={{ margin: 0, paddingLeft: 34, fontSize: 13, color: "#E7E9F0", display: "flex", flexDirection: "column", gap: 6 }}>
+                  <li>Mô hình kinh doanh</li>
+                  <li>Vấn đề hiện tại</li>
+                  <li>USP</li>
+                </ul>
+              </div>
+
+              <div className="xr-cognitive-section" style={{ background: "#131926", border: "1px solid #1E2536", padding: 16, borderRadius: 8, marginTop: 24 }}>
+                <span className="xr-label" style={{ color: "#9C8CF7", marginBottom: 8 }}>CURRENT HYPOTHESIS</span>
+                <p style={{ fontSize: 13, color: "#E7E9F0", margin: 0 }}>Đang hình thành giả thuyết...</p>
+              </div>
+
+              <div className="xr-cognitive-section" style={{ background: "#0B1614", border: "1px solid #152E24", padding: 16, borderRadius: 8, marginTop: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                  <Layout size={14} color="#4ADE9A" />
+                  <span className="xr-label" style={{ color: "#4ADE9A", margin: 0 }}>AI ĐANG SUY LUẬN TỪ DỮ LIỆU NÀO?</span>
+                </div>
+                <p style={{ fontSize: 13, color: "#4ADE9A", margin: 0 }}>"-"</p>
+              </div>
             </div>
           </div>
         );
