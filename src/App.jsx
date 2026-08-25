@@ -10,20 +10,20 @@ import {
 
 // ---------- TABS DEFINITION ----------
 const TABS = [
-  { id: "welcome", num: "01", label: "Chào mừng", icon: Home },
-  { id: "interview", num: "02", label: "Phỏng vấn với AI", icon: MessageCircle },
-  { id: "understanding", num: "03", label: "Xác thực thông tin", icon: Eye },
-  { id: "xray", num: "04", label: "Định vị mô hình", icon: Activity },
-  { id: "level", num: "05", label: "Cấp độ giá trị", icon: Layers },
-  { id: "bottleneck", num: "06", label: "Bản đồ điểm nghẽn", icon: AlertTriangle },
-  { id: "digital", num: "07", label: "Chuyển đổi số", icon: Cpu },
-  { id: "canvas", num: "08", label: "Bản đồ số (Canvas)", icon: Layout },
-  { id: "priority", num: "09", label: "Hành động ưu tiên", icon: CheckSquare },
-  { id: "revenue", num: "10", label: "Động cơ doanh thu", icon: TrendingUp },
-  { id: "hypothesis", num: "11", label: "Giả thuyết tăng trưởng", icon: Zap },
-  { id: "roadmap", num: "12", label: "Lộ trình 30 ngày", icon: Calendar },
-  { id: "dna", num: "13", label: "DNA doanh nghiệp", icon: Award },
-  { id: "report", num: "14", label: "Báo cáo điều hành", icon: FileText }
+  { id: "welcome", num: "01", label: "Welcome", icon: Home },
+  { id: "interview", num: "02", label: "Business Interview", icon: MessageCircle },
+  { id: "understanding", num: "03", label: "AI Understanding", icon: Eye },
+  { id: "xray", num: "04", label: "Business X-Ray", icon: Activity },
+  { id: "level", num: "05", label: "Business Level", icon: Layers },
+  { id: "bottleneck", num: "06", label: "Bottleneck Map", icon: AlertTriangle },
+  { id: "digital", num: "07", label: "Digital Score", icon: Cpu },
+  { id: "canvas", num: "08", label: "Digital Canvas", icon: Layout },
+  { id: "priority", num: "09", label: "Priority", icon: CheckSquare },
+  { id: "revenue", num: "10", label: "Revenue Engine", icon: TrendingUp },
+  { id: "hypothesis", num: "11", label: "Revenue Hypothesis", icon: Zap },
+  { id: "roadmap", num: "12", label: "Roadmap", icon: Calendar },
+  { id: "dna", num: "13", label: "Business DNA", icon: Award },
+  { id: "report", num: "14", label: "Executive Report", icon: FileText }
 ];
 
 const TIERS = [
@@ -119,7 +119,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Anh/chị hãy kể cho tôi nghe về doanh nghiệp của mình: doanh nghiệp đang bán gì, cho ai và hiện tại điều gì khiến anh/chị quan tâm nhất?"
+      content: "Chào anh/chị. Tôi là AI Business Architect. Để bắt đầu chẩn đoán, xin anh/chị chia sẻ ngắn gọn: Doanh nghiệp của mình đang bán gì (sản phẩm/dịch vụ cốt lõi), và đâu là điểm nghẽn lớn nhất khiến doanh nghiệp khó tăng trưởng lúc này?"
     }
   ]);
   const [stage, setStage] = useState("MO");
@@ -212,7 +212,7 @@ export default function App() {
     setMessages([
       {
         role: "assistant",
-        content: "Anh/chị hãy kể cho tôi nghe về doanh nghiệp của mình: doanh nghiệp đang bán gì, cho ai và hiện tại điều gì khiến anh/chị quan tâm nhất?"
+        content: "Chào anh/chị. Tôi là AI Business Architect. Để bắt đầu chẩn đoán, xin anh/chị chia sẻ ngắn gọn: Doanh nghiệp của mình đang bán gì (sản phẩm/dịch vụ cốt lõi), và đâu là điểm nghẽn lớn nhất khiến doanh nghiệp khó tăng trưởng lúc này?"
       }
     ]);
     setStage("MO");
@@ -266,41 +266,24 @@ export default function App() {
     switch (activeTab) {
       case "welcome":
         return (
-          <div style={{ maxWidth: 800, margin: "0 auto" }}>
-            <div className="xr-welcome-hero">
-              <span className="xr-label" style={{ color: "#6C6BF5" }}>Hệ thống phân tích &amp; định vị mô hình kinh doanh</span>
-              <h1 className="xr-fr" style={{ fontSize: 32, fontWeight: 800, color: "#F4F5FA", marginTop: 8, marginBottom: 12 }}>
-                AI Business X-Ray
+          <div style={{ maxWidth: 800, margin: "0 auto", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+            <div className="xr-welcome-hero" style={{ border: "none", background: "none" }}>
+              <div style={{ display: "inline-flex", justifyContent: "center", alignItems: "center", width: 64, height: 64, borderRadius: "50%", background: "rgba(108, 107, 245, 0.1)", marginBottom: 24, boxShadow: "0 0 20px rgba(108, 107, 245, 0.2)" }}>
+                <Cpu size={32} color="#9C8CF7" />
+              </div>
+              <h1 className="xr-fr" style={{ fontSize: 42, fontWeight: 800, color: "#F4F5FA", marginTop: 0, marginBottom: 16 }}>
+                AI BUSINESS <span style={{ background: "linear-gradient(135deg, #6C6BF5, #9C8CF7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>X-RAY</span>
               </h1>
-              <p style={{ fontSize: 14.5, color: "#B9C0D4", maxWidth: 580, margin: "0 auto 20px", lineHeight: 1.6 }}>
-                Khảo sát, đánh giá và định vị mô hình doanh nghiệp SME trong kỷ nguyên Số &amp; AI. Trợ lý AI Agent sẽ phỏng vấn trực tiếp CEO để phát hiện điểm nghẽn chiến lược và đưa ra giải pháp đột phá.
+              <p style={{ fontSize: 15, color: "#8B93A8", maxWidth: 650, margin: "0 auto 32px", lineHeight: 1.6 }}>
+                Hệ thống AI Diagnostic & Transformation Platform. Chúng tôi không sử dụng Form khảo sát. Bạn sẽ được phỏng vấn trực tiếp bởi AI Business Architect để chẩn đoán điểm nghẽn trước khi áp dụng công nghệ.
               </p>
-              <button className="xr-btn xr-btn-primary" onClick={() => setActiveTab("interview")}>
-                Bắt đầu cuộc phỏng vấn <ArrowRight size={16} />
-              </button>
-            </div>
-            
-            <div className="xr-welcome-grid">
-              <div className="xr-welcome-card">
-                <div style={{ color: "#6C6BF5", marginBottom: 10 }}><MessageCircle size={24} /></div>
-                <div className="xr-fr" style={{ fontWeight: 700, fontSize: 15, color: "#F4F5FA" }}>1. Phỏng vấn AI</div>
-                <p style={{ fontSize: 12.5, color: "#8B93A8", marginTop: 6, lineHeight: 1.5 }}>
-                  Trò chuyện tự nhiên với Trợ lý AI. Trả lời ~10 câu hỏi đào sâu về thực trạng doanh nghiệp.
-                </p>
-              </div>
-              <div className="xr-welcome-card">
-                <div style={{ color: "#4ADE9A", marginBottom: 10 }}><Activity size={24} /></div>
-                <div className="xr-fr" style={{ fontWeight: 700, fontSize: 15, color: "#F4F5FA" }}>2. Định vị mô hình</div>
-                <p style={{ fontSize: 12.5, color: "#8B93A8", marginTop: 6, lineHeight: 1.5 }}>
-                  Đánh giá tự động từ định vị giá trị, USP, marketing, dòng tiền đến vận hành và độ sẵn sàng số.
-                </p>
-              </div>
-              <div className="xr-welcome-card">
-                <div style={{ color: "#D4A24C", marginBottom: 10 }}><Zap size={24} /></div>
-                <div className="xr-fr" style={{ fontWeight: 700, fontSize: 15, color: "#F4F5FA" }}>3. Bản đồ &amp; Lộ trình</div>
-                <p style={{ fontSize: 12.5, color: "#8B93A8", marginTop: 6, lineHeight: 1.5 }}>
-                  Nhận lộ trình triển khai 30 ngày từng tuần và các giả thuyết tăng trưởng doanh thu thiết thực.
-                </p>
+              <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+                <button className="xr-btn xr-btn-primary" onClick={() => setActiveTab("interview")} style={{ padding: "14px 24px", fontSize: 15 }}>
+                  Bắt đầu Phỏng vấn AI <ArrowRight size={16} />
+                </button>
+                <button className="xr-btn xr-btn-secondary" style={{ padding: "14px 24px", fontSize: 15, background: "#1E2536", color: "#B9C0D4", border: "none" }}>
+                  Xem Executive Dashboard (Demo)
+                </button>
               </div>
             </div>
           </div>
@@ -308,158 +291,125 @@ export default function App() {
 
       case "interview":
         return (
-          <div className="xr-interview-layout">
-            <div className="xr-chat-wrapper">
-              <div className="xr-chat-container">
-                <div className="xr-chat-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <Cpu size={16} color="#6C6BF5" />
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#6C6BF5", textTransform: "uppercase" }}>
-                      AI CHALLENGER
-                    </span>
-                  </div>
+          <div style={{ display: "flex", gap: 24, height: "100%" }}>
+            <div className="xr-chat-container" style={{ flex: 1 }}>
+              <div className="xr-chat-header" style={{ borderBottom: "1px solid #1E2536", background: "transparent" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <Cpu size={16} color="#6C6BF5" />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#6C6BF5", letterSpacing: "0.05em" }}>
+                    AI CHALLENGER
+                  </span>
                 </div>
+              </div>
 
-                <div className="xr-chat-messages">
-                  {messages.map((m, idx) => {
-                    const isLastMessage = idx === messages.length - 1;
-                    return (
-                      <div key={idx} className={`xr-msg-row ${m.role === "assistant" ? "assistant" : "user"}`}>
-                        <div className="xr-msg-content-wrapper">
-                          <div className="xr-msg-sender-label">
-                            {m.role === "assistant" ? (
-                              <>
-                                <Cpu size={14} color="#6C6BF5" />
-                                <span>AI CHALLENGER</span>
-                              </>
-                            ) : (
-                              <>
-                                <span>CEO</span>
-                                <div className="xr-user-icon-small">
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                          <div className="xr-msg-bubble">
-                            {formatMessageText(m.content)}
-                            
-                            {stage === "COMPLETED" && isLastMessage && m.role === "assistant" && (
-                              <div style={{ marginTop: "14px" }}>
-                                {loadingReport ? (
-                                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#8B93A8", background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: "6px" }}>
-                                    <Loader2 className="xr-spin" size={14} color="#6C6BF5" />
-                                    <span>Đang lập báo cáo định vị doanh nghiệp...</span>
-                                  </div>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    className="xr-btn xr-btn-primary"
-                                    style={{ width: "100%", padding: "10px 14px", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
-                                    onClick={() => setActiveTab("understanding")}
-                                  >
-                                    Xem kết quả định vị ngay <ArrowRight size={14} />
-                                  </button>
-                                )}
+              <div className="xr-chat-messages">
+                {messages.map((m, idx) => {
+                  const isLastMessage = idx === messages.length - 1;
+                  return (
+                    <div key={idx} className={`xr-msg-row ${m.role === "assistant" ? "assistant" : "user"}`}>
+                      <div className="xr-msg-bubble">
+                        {formatMessageText(m.content)}
+                        
+                        {stage === "COMPLETED" && isLastMessage && m.role === "assistant" && (
+                          <div style={{ marginTop: "14px" }}>
+                            {loadingReport ? (
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#8B93A8", background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: "6px" }}>
+                                <Loader2 className="xr-spin" size={14} color="#6C6BF5" />
+                                <span>Đang lập báo cáo định vị doanh nghiệp...</span>
                               </div>
+                            ) : (
+                              <button
+                                type="button"
+                                className="xr-btn xr-btn-primary"
+                                style={{ width: "100%", padding: "10px 14px", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
+                                onClick={() => setActiveTab("understanding")}
+                              >
+                                Xem kết quả định vị ngay <ArrowRight size={14} />
+                              </button>
                             )}
                           </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  
-                  {loadingChat && (
-                    <div className="xr-msg-row assistant">
-                      <div className="xr-msg-content-wrapper">
-                        <div className="xr-msg-sender-label">
-                          <Cpu size={14} color="#6C6BF5" />
-                          <span>AI CHALLENGER</span>
-                        </div>
-                        <div className="xr-msg-bubble">
-                          <div className="xr-typing-dots">
-                            <div className="xr-typing-dot" />
-                            <div className="xr-typing-dot" />
-                            <div className="xr-typing-dot" />
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </div>
-                  )}
-                  
-                  <div ref={messagesEndRef} />
-                </div>
-
-                {error && (
-                  <div style={{ padding: "8px 16px", background: "rgba(247,107,107,0.1)", borderTop: "1px solid rgba(247,107,107,0.2)", color: "#F76B6B", fontSize: 12.5 }}>
-                    {error}
+                  );
+                })}
+                
+                {loadingChat && (
+                  <div className="xr-msg-row assistant">
+                    <div className="xr-msg-bubble">
+                      <div className="xr-typing-dots">
+                        <div className="xr-typing-dot" />
+                        <div className="xr-typing-dot" />
+                        <div className="xr-typing-dot" />
+                      </div>
+                    </div>
                   </div>
                 )}
-
-                {stage !== "COMPLETED" && (
-                  <form className="xr-chat-input-area" onSubmit={handleSend}>
-                    <input
-                      className="xr-chat-input"
-                      value={inputVal}
-                      onChange={(e) => setInputVal(e.target.value)}
-                      placeholder={loadingChat ? "AI đang trả lời..." : "Trả lời câu hỏi của AI (Nhấn Enter để gửi)..."}
-                      disabled={loadingChat}
-                    />
-                    <button className="xr-send-btn" type="submit" disabled={!inputVal.trim() || loadingChat}>
-                      <ArrowRight size={16} />
-                    </button>
-                  </form>
-                )}
+                
+                <div ref={messagesEndRef} />
               </div>
+
+              {error && (
+                <div style={{ padding: "8px 16px", background: "rgba(247,107,107,0.1)", borderTop: "1px solid rgba(247,107,107,0.2)", color: "#F76B6B", fontSize: 12.5 }}>
+                  {error}
+                </div>
+              )}
+
+              {stage !== "COMPLETED" && (
+                <form className="xr-chat-input-area" onSubmit={handleSend}>
+                  <input
+                    className="xr-chat-input"
+                    value={inputVal}
+                    onChange={(e) => setInputVal(e.target.value)}
+                    placeholder={loadingChat ? "AI đang trả lời..." : "Trả lời câu hỏi của AI (Nhấn Enter để gửi)..."}
+                    disabled={loadingChat}
+                  />
+                  <button className="xr-send-btn" type="submit" disabled={!inputVal.trim() || loadingChat}>
+                    <ArrowRight size={16} />
+                  </button>
+                </form>
+              )}
             </div>
-            
-            <div className="xr-cognitive-engine">
-              <div className="xr-cognitive-header">
-                <Cpu size={16} color="#6C6BF5" />
-                <span className="xr-fr" style={{ fontSize: 14, fontWeight: 700, color: "#E7E9F0", letterSpacing: "0.05em" }}>AI COGNITIVE ENGINE</span>
+
+            {/* AI COGNITIVE ENGINE Sidebar */}
+            <div style={{ width: 320, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <Cpu size={16} color="#E7E9F0" />
+                <span className="xr-fr" style={{ fontSize: 14, fontWeight: 700, color: "#E7E9F0", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI COGNITIVE ENGINE</span>
               </div>
               
-              <div className="xr-cognitive-section" style={{ background: "rgba(255,255,255,0.03)", padding: 16, borderRadius: 8, marginTop: 16, border: "1px solid #1E2536" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-                  <span style={{ fontSize: 12, color: "#8B93A8" }}>Confidence Level (Data Sufficiency)</span>
-                  <span style={{ fontSize: 12, color: "#4ADE9A", fontWeight: 700 }}>0%</span>
+              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1E2536", borderRadius: 12, padding: 16 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8B93A8", fontWeight: 700, marginBottom: 8 }}>
+                  <span>Confidence Level (Data Sufficiency)</span>
+                  <span style={{ color: "#4ADE9A" }}>0%</span>
                 </div>
-                <div className="xr-bar-track" style={{ height: 4, margin: 0, background: "#1E2536" }}>
+                <div className="xr-bar-track" style={{ height: 6, margin: 0, background: "#131926" }}>
                   <div className="xr-bar-fill" style={{ width: "0%", background: "#4ADE9A" }} />
                 </div>
               </div>
 
-              <div className="xr-cognitive-section" style={{ marginTop: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-                  <CheckSquare size={14} color="#4ADE9A" />
-                  <span className="xr-label" style={{ color: "#4ADE9A", margin: 0 }}>WHAT AI KNOWS</span>
-                </div>
-                <p style={{ fontSize: 13, color: "#8B93A8", margin: 0, paddingLeft: 20 }}>Đang thu thập thông tin...</p>
+              <div>
+                <span className="xr-label" style={{ color: "#4ADE9A", display: "flex", alignItems: "center", gap: 6 }}><CheckSquare size={14} /> WHAT AI KNOWS</span>
+                <p style={{ fontSize: 13, color: "#8B93A8", marginTop: 6, fontStyle: "italic" }}>Đang thu thập thông tin...</p>
               </div>
 
-              <div className="xr-cognitive-section" style={{ marginTop: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-                  <AlertTriangle size={14} color="#E8A33D" />
-                  <span className="xr-label" style={{ color: "#E8A33D", margin: 0 }}>WHAT AI DOESN'T KNOW</span>
-                </div>
-                <ul style={{ margin: 0, paddingLeft: 34, fontSize: 13, color: "#E7E9F0", display: "flex", flexDirection: "column", gap: 6 }}>
+              <div>
+                <span className="xr-label" style={{ color: "#E8A33D", display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={14} /> WHAT AI DOESN'T KNOW</span>
+                <ul style={{ fontSize: 13, color: "#E7E9F0", margin: "6px 0 0", paddingLeft: 20, lineHeight: 1.6 }}>
                   <li>Mô hình kinh doanh</li>
                   <li>Vấn đề hiện tại</li>
                   <li>USP</li>
                 </ul>
               </div>
 
-              <div className="xr-cognitive-section" style={{ background: "#131926", border: "1px solid #1E2536", padding: 16, borderRadius: 8, marginTop: 24 }}>
-                <span className="xr-label" style={{ color: "#9C8CF7", marginBottom: 8 }}>CURRENT HYPOTHESIS</span>
-                <p style={{ fontSize: 13, color: "#E7E9F0", margin: 0 }}>Đang hình thành giả thuyết...</p>
+              <div style={{ background: "rgba(108, 107, 245, 0.05)", border: "1px solid rgba(108, 107, 245, 0.2)", borderRadius: 12, padding: 16 }}>
+                <span className="xr-label" style={{ color: "#9C8CF7" }}>CURRENT HYPOTHESIS</span>
+                <p style={{ fontSize: 13, color: "#8B93A8", marginTop: 6, fontStyle: "italic", margin: "6px 0 0" }}>Đang hình thành giả thuyết...</p>
               </div>
 
-              <div className="xr-cognitive-section" style={{ background: "#0B1614", border: "1px solid #152E24", padding: 16, borderRadius: 8, marginTop: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-                  <Layout size={14} color="#4ADE9A" />
-                  <span className="xr-label" style={{ color: "#4ADE9A", margin: 0 }}>AI ĐANG SUY LUẬN TỪ DỮ LIỆU NÀO?</span>
-                </div>
-                <p style={{ fontSize: 13, color: "#4ADE9A", margin: 0 }}>"-"</p>
+              <div style={{ background: "#0B0F1A", border: "1px solid #1E2536", borderRadius: 12, padding: 16 }}>
+                <span className="xr-label" style={{ color: "#4ADE9A", display: "flex", alignItems: "center", gap: 6 }}><FileText size={14} /> AI ĐANG SUY LUẬN TỪ DỮ LIỆU NÀO?</span>
+                <p style={{ fontSize: 13, color: "#8B93A8", marginTop: 6, fontFamily: "monospace", margin: "6px 0 0" }}>-_ -</p>
               </div>
             </div>
           </div>
@@ -1054,7 +1004,7 @@ export default function App() {
       </div>
 
       {/* Right Main Content */}
-      <div className="xr-main-content">
+      <div className={`xr-main-content ${activeTab === 'welcome' ? 'welcome-bg' : ''}`}>
         {renderTabContent()}
 
         {/* Next Tab Navigation Footer */}
