@@ -81,9 +81,9 @@ app.post("/api/chat", async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
+      model: "gemini-1.5-pro",
       generationConfig: {
-        maxOutputTokens: 500,
+        maxOutputTokens: 1024,
         temperature: 0.7,
       }
     });
@@ -93,14 +93,20 @@ app.post("/api/chat", async (req, res) => {
     const systemPrompt = `${systemPromptBase}
 
 - Hiện tại, buổi chat đang ở lượt thứ ${userMessagesCount + 1}/10. 
+Hãy đóng vai AI (Chuyên gia tư vấn) để đưa ra phản hồi tiếp theo. YÊU CẦU QUAN TRỌNG: Hãy đảm bảo đưa ra câu trả lời đầy đủ nội dung, hoàn chỉnh, tuyệt đối không bị cắt ngang hoặc bỏ dở câu giữa chừng.
 
 Lịch sử cuộc hội thoại:
-${history.map(m => `${m.role === "user" ? "CEO" : "AI"}: ${m.content}`).join("\n")}
+${history.map(m => `${m.role === "user" ? "CEO" : "AI"}: ${m.content}`).join("\n\n")}
+
 AI:`;
 
     console.log(`🤖 Generating AI chat response for turn ${userMessagesCount}...`);
     const result = await model.generateContent(systemPrompt);
-    const replyText = result.response.text().trim();
+    let replyText = result.response.text().trim();
+    // Remove "AI:" prefix if the model accidentally included it
+    if (replyText.startsWith("AI:")) {
+      replyText = replyText.replace(/^AI:\s*/, "");
+    }
 
     // Determine current stage based on user message count
     let stage = "MO";
@@ -149,10 +155,11 @@ app.post("/api/report", async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
+      model: "gemini-1.5-pro",
       generationConfig: {
         responseMimeType: "application/json",
         temperature: 0.5,
+        maxOutputTokens: 8192,
       }
     });
 
