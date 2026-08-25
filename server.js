@@ -81,7 +81,7 @@ app.post("/api/chat", async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-3.6-flash",
       generationConfig: {
         maxOutputTokens: 1024,
         temperature: 0.7,
@@ -155,7 +155,7 @@ app.post("/api/report", async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-3.6-flash",
       generationConfig: {
         responseMimeType: "application/json",
         temperature: 0.5,
